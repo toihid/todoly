@@ -1,0 +1,26 @@
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./todoly
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout changes
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v3
+      - name: Install project
+        run: npm i
+      - name: Generate dist folder
+        run: npm run build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./movie-project/dist
