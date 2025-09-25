@@ -1,46 +1,38 @@
-import { format } from "date-fns";
+import { Box } from "@chakra-ui/react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "../../assets/css/style.css"; // your custom styles
+import { useState } from "react";
 
-interface CalendarProps {
+interface ChakraDatepickerProps {
   selectedDate: Date | null;
   onSelectDate: (date: Date) => void;
 }
 
-export const Calendar = ({ selectedDate, onSelectDate }: CalendarProps) => {
-  const today = new Date();
-  const end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const days = Array.from({ length: end.getDate() }, (_, i) => {
-    return new Date(today.getFullYear(), today.getMonth(), i + 1);
-  });
+export const Calendar = ({
+  selectedDate,
+  onSelectDate,
+}: ChakraDatepickerProps) => {
+  const [startDate, setStartDate] = useState<Date | null>(selectedDate);
+
+  const handleChange = (date: Date | null) => {
+    setStartDate(date);
+    if (date) {
+      onSelectDate(date);
+    }
+  };
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(7, 1fr)",
-        gap: "5px",
-        border: "1px solid #ccc",
-        padding: "10px",
-        borderRadius: "6px",
-      }}
-    >
-      {days.map((day) => (
-        <div
-          key={day.toDateString()}
-          onClick={() => onSelectDate(day)}
-          style={{
-            cursor: "pointer",
-            padding: "10px",
-            textAlign: "center",
-            borderRadius: "4px",
-            backgroundColor:
-              selectedDate && day.toDateString() === selectedDate.toDateString()
-                ? "#90cdf4"
-                : "#f9f9f9",
-          }}
-        >
-          {format(day, "d")}
-        </div>
-      ))}
-    </div>
+    <Box w="30%">
+      <DatePicker
+        selected={startDate}
+        onChange={handleChange}
+        dateFormat="yyyy-MM-dd"
+        showMonthDropdown
+        showYearDropdown
+        dropdownMode="select"
+        inline // calendar always visible
+      />
+    </Box>
   );
 };
