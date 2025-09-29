@@ -5,9 +5,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./todoly
     permissions:
       contents: write
     steps:
