@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import type { Task } from "../../types/task";
 import { format, isSameDay } from "date-fns";
 import axios from "axios";
-import { Box, Badge, Text, VStack, Button } from "@chakra-ui/react";
-import { FiEdit2 } from "react-icons/fi"; // Feather edit icon
+import { Box, Badge, Text, VStack, Button, HStack } from "@chakra-ui/react";
+import { FiEdit2, FiTrash } from "react-icons/fi";
+
 import { EditTaskModal } from "../TaskForm/EditTaskModal";
 
 interface TaskListProps {
@@ -109,6 +110,19 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
     );
   };
 
+  const handleDelete = async (id: string) => {
+    // Show confirmation
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this task?"
+    );
+    if (!confirmed) return;
+    try {
+      await axios.delete(`http://localhost:5000/api/tasks/${id}`);
+      setTasks((prev) => prev.filter((t) => t.id !== id));
+    } catch (err) {
+      console.error("Failed to delete task", err);
+    }
+  };
   return (
     <Box mt={5} width="30%">
       <Text fontSize="xl" fontWeight="bold" mb={3}>
@@ -127,7 +141,7 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
         gap={4}
         align="stretch"
         display={"flex"}
-        justifyContent={"center"}
+        justifyContent={"space-between"}
       >
         {tasks.map((task) => (
           <Box
@@ -190,6 +204,19 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
             >
               <FiEdit2 />
               Edit
+            </Button>
+            <Button
+              ms={3}
+              size="sm"
+              colorScheme="red"
+              variant="outline"
+              bg="red.500"
+              color="white"
+              _hover={{ bg: "red.600" }}
+              onClick={() => task.id && handleDelete(task.id)}
+            >
+              <FiTrash />
+              Delete
             </Button>
           </Box>
         ))}
