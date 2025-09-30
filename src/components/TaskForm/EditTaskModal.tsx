@@ -29,7 +29,7 @@ export const EditTaskModal = ({
   onUpdate,
 }: EditTaskModalProps) => {
   const [title, setTitle] = useState("");
-  const [details, setDetails] = useState("");
+  const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [status, setStatus] = useState<Task["status"]>("pending");
@@ -40,7 +40,7 @@ export const EditTaskModal = ({
   useEffect(() => {
     if (task) {
       setTitle(task.title);
-      setDetails(task.details || "");
+      setDescription(task.description || "");
       setDate(task.date ? new Date(task.date).toISOString().split("T")[0] : "");
       setTags(task.tags || []);
       setStatus(task.status);
@@ -55,7 +55,7 @@ export const EditTaskModal = ({
     const updatedTask: Task = {
       ...task,
       title,
-      details,
+      description,
       date: new Date(date),
       tags,
       status,
@@ -107,8 +107,8 @@ export const EditTaskModal = ({
           />
           <Textarea
             placeholder="Task details"
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             rows={4}
           />
           <Input

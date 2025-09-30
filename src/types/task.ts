@@ -1,7 +1,7 @@
 export interface Task {
-  id: number;
+  id?: string;
   title: string;
-  details: string;
+  description: string;
   date: Date;
   tags: string[];
   status: "pending" | "in-progress" | "completed"; // optional: restrict to specific strings

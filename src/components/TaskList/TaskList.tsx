@@ -4,6 +4,7 @@ import { format, isSameDay } from "date-fns";
 import axios from "axios";
 import { Box, Badge, Text, VStack, Button } from "@chakra-ui/react";
 import { FiEdit2 } from "react-icons/fi"; // Feather edit icon
+import { EditTaskModal } from "../TaskForm/EditTaskModal";
 
 interface TaskListProps {
   selectedDate: Date | null;
@@ -25,7 +26,8 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   useEffect(() => {
     if (!selectedDate) return;
 
@@ -38,14 +40,19 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
           "http://localhost:5000/api/tasks"
         );
 
-        // Convert date strings to Date objects
-        const tasksWithDate: Task[] = data.map((task) => ({
-          ...task,
-          date: new Date(task.date),
+        // Map _id -> id and convert date strings to Date objects
+        const tasksWithIdAndDate: Task[] = data.map((task: any) => ({
+          id: task._id, // <- map MongoDB _id to id
+          title: task.title,
+          description: task.description,
+          date: new Date(task.date), // convert string to Date
+          tags: task.tags,
+          status: task.status,
+          priority: task.priority,
         }));
 
         // Filter tasks for the selected date
-        const filteredTasks = tasksWithDate.filter((task) =>
+        const filteredTasks = tasksWithIdAndDate.filter((task) =>
           isSameDay(task.date, selectedDate)
         );
 
@@ -88,9 +95,20 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
 
   // Handler for edit
   const handleEdit = (task: Task) => {
-    console.log("Edit task:", task);
-    // You could open a modal or redirect to an edit form here
+    setSelectedTask(task);
+    setIsModalOpen(true);
   };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedTask(null);
+  };
+  const handleUpdateTask = (updatedTask: Task) => {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+    );
+  };
+
   return (
     <Box mt={5} width="30%">
       <Text fontSize="xl" fontWeight="bold" mb={3}>
@@ -123,7 +141,7 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
             <Text fontWeight="bold" fontSize="lg">
               {task.title}
             </Text>
-            <Text mb={2}>{task.details}</Text>
+            <Text mb={2}>{task.description}</Text>
 
             {/* Priority Badge */}
             <Badge
@@ -176,6 +194,14 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
           </Box>
         ))}
       </VStack>
+      {selectedTask && (
+        <EditTaskModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          task={selectedTask}
+          onUpdate={handleUpdateTask}
+        />
+      )}
     </Box>
   );
 };
