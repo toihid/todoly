@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import type { Task } from "../../types/task";
 import { format, isSameDay } from "date-fns";
 import axios from "axios";
-import { Box, Badge, Text, VStack } from "@chakra-ui/react";
+import { Box, Badge, Text, VStack, Button } from "@chakra-ui/react";
+import { FiEdit2 } from "react-icons/fi"; // Feather edit icon
 
 interface TaskListProps {
   selectedDate: Date | null;
+  tasks: Task[];
 }
 
 // Task interface (task.js/types)
@@ -84,6 +86,11 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
     }
   };
 
+  // Handler for edit
+  const handleEdit = (task: Task) => {
+    console.log("Edit task:", task);
+    // You could open a modal or redirect to an edit form here
+  };
   return (
     <Box mt={5} width="30%">
       <Text fontSize="xl" fontWeight="bold" mb={3}>
@@ -156,6 +163,16 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
                 #{tag}
               </Badge>
             ))}
+
+            <Button
+              size="sm"
+              colorScheme="blue"
+              variant="outline"
+              onClick={() => handleEdit(task)}
+            >
+              <FiEdit2 />
+              Edit
+            </Button>
           </Box>
         ))}
       </VStack>
