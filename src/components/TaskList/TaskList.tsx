@@ -4,6 +4,7 @@ import { format, isSameDay } from "date-fns";
 import axios from "axios";
 import { Box, Badge, Text, VStack, Button, HStack } from "@chakra-ui/react";
 import { FiEdit2, FiTrash } from "react-icons/fi";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 
 import { EditTaskModal } from "../TaskForm/EditTaskModal";
 
@@ -29,6 +30,9 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+
   useEffect(() => {
     if (!selectedDate) return;
 
@@ -110,19 +114,24 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
     );
   };
 
-  const handleDelete = async (id: string) => {
-    // Show confirmation
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this task?"
-    );
-    if (!confirmed) return;
+  const handleDeleteClick = (task: Task) => {
+    setTaskToDelete(task);
+    setIsConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!taskToDelete) return;
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${id}`);
-      setTasks((prev) => prev.filter((t) => t.id !== id));
+      await axios.delete(`http://localhost:5000/api/tasks/${taskToDelete.id}`);
+      setTasks((prev) => prev.filter((t) => t.id !== taskToDelete.id));
     } catch (err) {
       console.error("Failed to delete task", err);
+    } finally {
+      setTaskToDelete(null);
+      setIsConfirmOpen(false);
     }
   };
+
   return (
     <Box mt={5} width="30%">
       <Text fontSize="xl" fontWeight="bold" mb={3}>
@@ -213,7 +222,7 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
               bg="red.500"
               color="white"
               _hover={{ bg: "red.600" }}
-              onClick={() => task.id && handleDelete(task.id)}
+              onClick={() => handleDeleteClick(task)}
             >
               <FiTrash />
               Delete
@@ -227,6 +236,18 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
           onClose={handleCloseModal}
           task={selectedTask}
           onUpdate={handleUpdateTask}
+        />
+      )}
+      {isConfirmOpen && (
+        <ConfirmDialog
+          isOpen={isConfirmOpen}
+          onClose={() => {
+            setIsConfirmOpen(false);
+            setTaskToDelete(null);
+          }}
+          onConfirm={confirmDelete}
+          title="Delete Task"
+          message={`Are you sure you want to delete "${taskToDelete?.title}" ?`}
         />
       )}
     </Box>
