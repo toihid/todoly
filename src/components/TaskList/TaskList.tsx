@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Task } from "../../types/task";
 import { format, isSameDay } from "date-fns";
 import axios from "axios";
-import { Box, Badge, Text, VStack, Button, HStack } from "@chakra-ui/react";
+import { Box, Badge, Text, VStack, Button } from "@chakra-ui/react";
 import { FiEdit2, FiTrash } from "react-icons/fi";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 
