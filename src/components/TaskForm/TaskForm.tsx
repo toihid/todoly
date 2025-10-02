@@ -21,7 +21,7 @@ interface TaskFormProps {
 const statusOptions: Task["status"][] = ["pending", "in-progress", "completed"];
 const priorityOptions: Task["priority"][] = ["low", "medium", "high"];
 
-export const TaskForm = ({ onAddTask }: TaskFormProps) => {
+export const TaskForm: React.FC<TaskFormProps> = ({ onAddTask } ) => {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
