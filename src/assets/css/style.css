@@ -46,3 +46,9 @@
   background-color: #3182ce; /* Chakra blue 600 selected */
   color: white;
 }
+
+.task-day {
+  background-color: #4da6ff !important;
+  font-weight: bold;
+  color: black !important;
+}
