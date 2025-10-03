@@ -133,7 +133,7 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
   };
 
   return (
-    <Box mt={5} width="30%">
+    <Box mt={5} width="40%">
       <Text fontSize="xl" fontWeight="bold" mb={3}>
         {selectedDate
           ? `Tasks for ${format(selectedDate, "PPP")}`
