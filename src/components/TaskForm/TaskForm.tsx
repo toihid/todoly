@@ -21,10 +21,10 @@ interface TaskFormProps {
 const statusOptions: Task["status"][] = ["pending", "in-progress", "completed"];
 const priorityOptions: Task["priority"][] = ["low", "medium", "high"];
 
-export const TaskForm = ({ onAddTask }: TaskFormProps) => {
+export const TaskForm: React.FC<TaskFormProps> = ({ onAddTask } ) => {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [details, setDetails] = useState("");
+  const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
@@ -51,9 +51,8 @@ export const TaskForm = ({ onAddTask }: TaskFormProps) => {
     if (!title || !date) return;
 
     const taskData: Task = {
-      id: Date.now(),
       title,
-      details,
+      description,
       date: new Date(date),
       tags,
       status,
@@ -75,7 +74,7 @@ export const TaskForm = ({ onAddTask }: TaskFormProps) => {
 
       // Reset form
       setTitle("");
-      setDetails("");
+      setDescription("");
       setDate("");
       setTags([]);
       setTagInput("");
@@ -137,8 +136,8 @@ export const TaskForm = ({ onAddTask }: TaskFormProps) => {
               />
               <Textarea
                 placeholder="Task details"
-                value={details}
-                onChange={(e) => setDetails(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 rows={4}
               />
               <Input

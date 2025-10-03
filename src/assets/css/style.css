@@ -1,0 +1,54 @@
+/* Make inline calendar full width */
+.react-datepicker {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+.react-datepicker__week {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.react-datepicker__week .react-datepicker__day,
+.react-datepicker__day-names .react-datepicker__day-name {
+  flex: 1;
+}
+
+.react-datepicker__month-container {
+  width: 100%;
+}
+.react-datepicker__header__dropdown.react-datepicker__header__dropdown--select {
+  margin: 15px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.react-datepicker__day,
+.react-datepicker__day-name {
+  width: 2.5rem; /* adjust size of cells */
+  height: 2.5rem;
+  line-height: 2.5rem;
+  margin: 0.1rem;
+  text-align: center;
+  border-radius: 0.25rem;
+}
+
+.react-datepicker__day-names {
+  display: flex;
+  justify-content: center;
+}
+
+.react-datepicker__day:hover {
+  background-color: #4299e1 !important; /* Chakra blue 200 hover */
+}
+
+.react-datepicker__day--selected {
+  background-color: #3182ce; /* Chakra blue 600 selected */
+  color: white;
+}
+
+.task-day {
+  background-color: #4da6ff !important;
+  font-weight: bold;
+  color: black !important;
+}
