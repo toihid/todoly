@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Task } from "../../types/task";
 import { format, isSameDay } from "date-fns";
 import axios from "axios";
-import { Box, Badge, Text, VStack, Button } from "@chakra-ui/react";
+import { Box, Badge, Text, VStack, Button, Flex } from "@chakra-ui/react";
 import { FiEdit2, FiTrash } from "react-icons/fi";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 
@@ -33,6 +33,10 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [priorityFilter, setPriorityFilter] = useState<string>("");
+  const [tagFilter, setTagFilter] = useState<string>("");
+
   useEffect(() => {
     if (!selectedDate) return;
 
@@ -57,11 +61,11 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
         }));
 
         // Filter tasks for the selected date
-        const filteredTasks = tasksWithIdAndDate.filter((task) =>
+        const filteredTasks1 = tasksWithIdAndDate.filter((task) =>
           isSameDay(task.date, selectedDate)
         );
 
-        setTasks(filteredTasks);
+        setTasks(filteredTasks1);
       } catch (err: any) {
         setError(err.message || "Something went wrong");
       } finally {
@@ -71,6 +75,17 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
 
     fetchTasks();
   }, [selectedDate]);
+
+  const availableTags = Array.from(new Set(tasks.flatMap((t) => t.tags)));
+
+  const filteredTasks = tasks.filter((task) => {
+    const matchesStatus = statusFilter ? task.status === statusFilter : true;
+    const matchesPriority = priorityFilter
+      ? task.priority === priorityFilter
+      : true;
+    const matchesTag = tagFilter ? task.tags.includes(tagFilter) : true;
+    return matchesStatus && matchesPriority && matchesTag;
+  });
 
   const getPriorityColor = (priority: Task["priority"]) => {
     switch (priority.toLowerCase()) {
@@ -134,7 +149,7 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
 
   return (
     <Box mt={5} width="40%">
-      <Text fontSize="xl" fontWeight="bold" mb={3}>
+      <Text fontSize="md" fontWeight="bold" mb={3} textAlign={"center"}>
         {selectedDate
           ? `Tasks for ${format(selectedDate, "PPP")}`
           : "Select a date"}
@@ -146,13 +161,62 @@ export const TaskList = ({ selectedDate }: TaskListProps) => {
         <Text>No tasks for this date.</Text>
       )}
 
+      {!loading && !error && tasks.length > 0 && (
+        <Box
+          mb={4}
+          display="flex"
+          gap={2}
+          justifyContent={"space-between"}
+          p={4}
+          borderWidth="1px"
+          borderRadius="md"
+          boxShadow="sm"
+          _hover={{ shadow: "md" }}
+        >
+          {/* Priority Filter */}
+          <select
+            value={priorityFilter}
+            onChange={(e) => setPriorityFilter(e.target.value)}
+          >
+            <option value="">All Priority</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="in-progress">In-Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+
+          {/* Tag Filter */}
+          <select
+            value={tagFilter}
+            onChange={(e) => setTagFilter(e.target.value)}
+          >
+            <option value="">All Tags</option>
+            {availableTags.map((tag) => (
+              <option key={tag} value={tag}>
+                {tag}
+              </option>
+            ))}
+          </select>
+        </Box>
+      )}
+
       <VStack
         gap={4}
         align="stretch"
         display={"flex"}
         justifyContent={"space-between"}
       >
-        {tasks.map((task) => (
+        {filteredTasks.map((task) => (
           <Box
             key={task.id}
             p={4}
