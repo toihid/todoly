@@ -18,8 +18,8 @@ export const Calendar = ({
   const [startDate, setStartDate] = useState<Date | null>(selectedDate);
 
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [, setLoading] = useState(false);
+  const [, setError] = useState<string | null>(null);
 
   const handleChange = (date: Date | null) => {
     setStartDate(date);
