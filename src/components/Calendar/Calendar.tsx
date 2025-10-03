@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../assets/css/style.css"; // your custom styles
@@ -76,17 +76,21 @@ export const Calendar = ({
   };
 
   return (
-    <Box w="30%">
-      <DatePicker
-        selected={startDate}
-        onChange={handleChange}
-        dateFormat="yyyy-MM-dd"
-        showMonthDropdown
-        showYearDropdown
-        dropdownMode="select"
-        inline // calendar always visible
-        dayClassName={getDayClassName} // ✅ cleaner function call
-      />
-    </Box>
+    <>
+      {loading && <Text>Loading calendar...</Text>}
+      {error && <Text color="red.500">{error}</Text>}
+      <Box w="30%">
+        <DatePicker
+          selected={startDate}
+          onChange={handleChange}
+          dateFormat="yyyy-MM-dd"
+          showMonthDropdown
+          showYearDropdown
+          dropdownMode="select"
+          inline // calendar always visible
+          dayClassName={getDayClassName} // ✅ cleaner function call
+        />
+      </Box>
+    </>
   );
 };
